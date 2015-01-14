@@ -4,5 +4,5 @@ Nginx Lua + Redis module for consistent routing to backend servers by session ID
 ## Adding a backend
 
 ```
-redis sadd backends:[host] [ip]
+redis sadd backends:[host] [ip]:[port]
 ```
