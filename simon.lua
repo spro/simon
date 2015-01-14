@@ -8,17 +8,17 @@ red:connect('127.0.0.1', 6379)
 
 local sid, err = ck:get('connect.sid')
 if sid then
-    local shost, err = red:get('sid:' .. sid)
-    if shost ~= ngx.null then
-        ngx.var.proxy_to = shost
+    local backend, err = red:get('sid:' .. sid)
+    if backend ~= ngx.null then
+        ngx.var.proxy_to = backend
         return
     end
 end
 
 -- Get new one
 local headers = ngx.req.get_headers()
-local hosts = red:smembers('frontend:' .. headers['host'])
-local chosen = hosts[math.random(#hosts)]
+local backends = red:smembers('backends:' .. headers['host'])
+local chosen = backends[math.random(#backends)]
 ngx.var.proxy_to = chosen
 if sid then red:set('sid:' .. sid, chosen) end
 
