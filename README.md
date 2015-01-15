@@ -16,14 +16,15 @@ http {
 
     ...
     
-    lua_package_path "/opt/nginx/lib/resty/redis.lua;;"
+    lua_package_path "/opt/nginx/lua/resty/redis.lua;;"
 
     server {
     
         location / {
             set $proxy_to "";
-            access_by_lua_file "/opt/nginx/lib/simon.lua";
+            access_by_lua_file "/opt/nginx/lua/simon.lua";
             proxy_pass http://$proxy_to;
+            proxy_set_header Host $http_host;
         }
         
         ...
