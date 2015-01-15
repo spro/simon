@@ -9,7 +9,7 @@ redis sadd backends:[host] [ip]:[port]
 
 ## In `nginx.conf`
 
-Make sure to compile with Lua support and include [lua-resty-redis](https://github.com/openresty/lua-resty-redis)
+Make sure to [compile nginx with Lua support](https://github.com/openresty/lua-nginx-module#installation) and include [lua-resty-redis](https://github.com/openresty/lua-resty-redis)
 
 ```
 http {
