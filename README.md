@@ -1,5 +1,5 @@
 # simon
-Nginx Lua + Redis module for consistent routing to backend servers by session ID. Inspired by hipache.
+Nginx Lua + Redis module for consistent routing to backend servers by session ID. Inspired by [hipache](https://github.com/hipache/hipache).
 
 ## Adding a backend
 
@@ -16,7 +16,7 @@ http {
 
     ...
     
-    lua_package_path "/opt/nginx/lua/resty/redis.lua;;"
+    lua_package_path "/opt/nginx/lua/resty/redis.lua";
 
     server {
     
