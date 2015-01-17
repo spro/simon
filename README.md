@@ -22,7 +22,7 @@ http {
     
         location / {
             set $proxy_to "";
-            access_by_lua_file "/opt/nginx/lua/simon.lua";
+            access_by_lua_file "/opt/nginx/lua/simon/simon.lua";
             proxy_pass http://$proxy_to;
             proxy_set_header Host $http_host;
         }
