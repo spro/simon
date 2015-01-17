@@ -1,4 +1,3 @@
-local cjson = require 'cjson'
 local cookie = require 'cookie'
 local redis = require 'redis'
 
