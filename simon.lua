@@ -6,7 +6,8 @@ red:connect('127.0.0.1', 6379)
 -- Get session ID from cookie and host from headers
 local sid = ngx.var['cookie_connect.sid']
 local headers = ngx.req.get_headers()
-local host  = headers['host']
+local host = headers['host']
+host = string.gsub(host, "^www.", "")
 
 if sid then
 
