@@ -1,11 +1,13 @@
 # simon
-Nginx Lua + Redis module for consistent routing to backend servers by session ID. Inspired by [hipache](https://github.com/hipache/hipache).
+Nginx Lua + Redis module for dynamic routing to backend servers by hostname. Inspired by [hipache](https://github.com/hipache/hipache).
 
 ## Adding a backend
 
 ```
 redis sadd backends:[host] [ip]:[port]
 ```
+
+**Note:** If you add multiple backends to a set, visitors will be randomly directed to one of the members as a rough form of load balancing. If a session ID is present (currently using the Express default `cookie_connect.sid`) it will be used to keep visitors consistently hitting one backend.
 
 ## In `nginx.conf`
 
