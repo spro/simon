@@ -1,17 +1,43 @@
 # simon
-Nginx Lua + Redis module for dynamic routing to backend servers by hostname. Inspired by [hipache](https://github.com/hipache/hipache).
+dynamic routing/vhosts with nginx + Lua + Redis. Largely inspired by [hipache](https://github.com/hipache/hipache), a standalone proxy that does the same thing.
 
-## Adding a backend
+# Usage
+
+When a request hits Simon, Simon looks in Redis for a set called `backends:[hostname]` and passes the location it finds to `proxy_pass`, and nginx proxies your request there. To add a route, add it to the proper Redis set:
 
 ```
-redis sadd backends:[host] [ip]:[port]
+sadd backends:[hostname] [ip]:[port]
 ```
 
-**Note:** If you add multiple backends to a set, visitors will be randomly directed to one of the members as a rough form of load balancing. If a session ID is present (currently using the Express/Connect default `cookie_connect.sid`) it will be used to keep visitors consistently hitting one backend.
+## Examples
 
-## In `nginx.conf`
+Use with a local nginx server and dnsmasq to make easy aliases for local projects:
+
+```
+> redis-cli sadd backend backends:project.dev 127.0.0.1:5520
+1
+
+> curl project.dev
+<h1>Welcome to project.dev</h1>
+```
+
+Or on a server to distribute requests for a certain subdomain:
+
+```
+> redis-cli sadd backend backends:api.tryna.io 107.53.26.48:2280 107.52.2.16:2280 57.63.86.48:2280
+3
+
+> curl api.tryna.io
+<a href='http://areyoutryna.com/'>are you tryna?</a>
+```
+
+If you add multiple backends to a set, new visitors will be randomly directed to one of the members as a rough form of load balancing. If a session ID is present (currently using the Express/Connect default `cookie_connect.sid`) it will be used to keep returning visitors consistently hitting one backend.
+
+# Installation
 
 Make sure to [compile nginx with Lua support](https://github.com/openresty/lua-nginx-module#installation) and include [lua-resty-redis](https://github.com/openresty/lua-resty-redis) and [lua-resty-cookie](https://github.com/cloudflare/lua-resty-cookie)
+
+## Add to `nginx.conf`:
 
 ```
 http {
@@ -35,10 +61,6 @@ http {
     
 }
 ```
-
-## How it works
-
-Simon grabs the request Hostname and looks for any members of the Redis set `backends:[host]`. If there are any, it chooses one and sets it as an nginx variable `$proxy_to`. Nginx uses the variable as the argument to `proxy_pass` when the script returns.
 
 ## TODO
 
