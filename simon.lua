@@ -7,7 +7,7 @@ red:connect('127.0.0.1', 6379)
 local sid = ngx.var['cookie_connect.sid']
 local headers = ngx.req.get_headers()
 local host = headers['host']
-host = string.gsub(host, "^www.", "")
+host = string.lower(string.gsub(host, "^www.", ""))
 
 if sid then
 
