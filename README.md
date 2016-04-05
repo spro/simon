@@ -24,7 +24,7 @@ Use with a local nginx server and dnsmasq to make easy aliases for local project
 Or on a server to distribute requests for a certain subdomain:
 
 ```
-> redis-cli sadd backend backends:api.tryna.io 107.53.26.48:2280 107.52.2.16:2280 57.63.86.48:2280
+> redis-cli sadd backends:api.tryna.io 107.53.26.48:2280 107.52.2.16:2280 57.63.86.48:2280
 3
 
 > curl api.tryna.io
