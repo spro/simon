@@ -14,7 +14,7 @@ sadd backends:[hostname] [ip]:[port]
 Use with a local nginx server and dnsmasq to make easy aliases for local projects:
 
 ```
-> redis-cli sadd backend backends:project.dev 127.0.0.1:5520
+> redis-cli sadd backends:project.dev 127.0.0.1:5520
 1
 
 > curl project.dev
