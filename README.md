@@ -35,24 +35,40 @@ If you add multiple backends to a set, new visitors will be randomly directed to
 
 # Installation
 
-Make sure to [compile nginx with Lua support](https://github.com/openresty/lua-nginx-module#installation) and include [lua-resty-redis](https://github.com/openresty/lua-resty-redis) and [lua-resty-cookie](https://github.com/cloudflare/lua-resty-cookie)
+* Compile nginx with Lua support (e.g. with [OpenResty](http://openresty.org/en/download.html))
 
-## Add to `nginx.conf`:
+```
+apt-get install libreadline-dev libncurses5-dev libpcre3-dev libssl-dev perl make build-essential
+tar -xzvf openresty-VERSION.tar.gz
+cd openresty-VERSION/
+./configure  --with-luajit --prefix=/opt/openresty
+make && sudo make install
+```
+
+* Clone simon into `/opt/openresty/lualib/`
+
+```
+cd /opt/openresty/lualib/
+git clone http://github.com/spro/simon
+```
+
+* Add to `/opt/openresty/nginx/conf/nginx.conf`
 
 ```
 http {
 
     ...
     
-    lua_package_path "/opt/nginx/lua/resty/?.lua";
+    lua_package_path "/opt/openresty/lualib/resty/?.lua";
 
     server {
     
         location / {
             set $proxy_to "";
-            access_by_lua_file "/opt/nginx/lua/simon/simon.lua";
+            access_by_lua_file "/opt/openresty/lualib/simon/simon.lua";
             proxy_pass http://$proxy_to;
             proxy_set_header Host $http_host;
+            proxy_set_header X-Forwarded-For $remote_addr;
         }
         
         ...
