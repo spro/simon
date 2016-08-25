@@ -31,7 +31,7 @@ Or on a server to distribute requests for a certain subdomain:
 <a href='http://areyoutryna.com/'>are you tryna?</a>
 ```
 
-If you add multiple backends to a set, new visitors will be randomly directed to one of the members as a rough form of load balancing. If a session ID is present (currently using the Express/Connect default `cookie_connect.sid`) it will be used to keep returning visitors consistently hitting one backend.
+If you add multiple backends to a set, new visitors will be randomly directed to one of the members as a rough form of load balancing. If a session ID is present (read from the cookie "cookie_connect.sid" by default) it will be used to consistently direct visitors to one backend.
 
 # Installation
 
@@ -78,7 +78,12 @@ http {
 }
 ```
 
+# Options
+
+* `cookie_key` (default "cookie_connect.sid"): Name of the cookie from which a session ID should be read.
+
+Usage: above `access_by_lua_file`, add the line `set $cookie_key "custom_cookie_key"`
+
 ## TODO
 
 * Custom error pages (shows generic Nginx error if no hostname matches)
-* Configurable cookie name (currently hard coded as Express/Connect's default `cookie_connect.sid`)
