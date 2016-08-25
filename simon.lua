@@ -24,6 +24,20 @@ end
 
 -- Choose a random backend based on the host
 local backends = red:smembers('backends:' .. host)
+
+-- Try to find a wildcard definition if there's no match
+if #backends == 0 then
+    local host_parts = {}
+    for token in string.gmatch(host, '([^.]+)') do
+        table.insert(host_parts, token)
+    end
+    if #host_parts > 2 then
+        table.remove(host_parts, 1)
+        local host_trimmed = table.concat(host_parts, '.')
+        backends = red:smembers('backends:*.' .. host_trimmed)
+    end
+end
+
 local chosen = backends[math.random(#backends)]
 
 if sid then red:set('sess:' .. host .. ':' .. sid, chosen) end
