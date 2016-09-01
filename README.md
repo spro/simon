@@ -7,7 +7,7 @@ Simon allows you to very quickly point domains to specific ports by setting up d
 
 # Usage
 
-When a request hits Simon, Simon looks in Redis for a set called `backends:[hostname]` and passes the location it finds to `proxy_pass`, and nginx proxies your request there. To add a route, add it to the proper Redis set:
+For every request, Simon looks for a Redis Set called `backends:[hostname]` to find a destination for nginx's `proxy_pass`. To define a route, add a destination in the form `[ip]:[port]` to a Redis set `backends:[hostname]`:
 
 ```
 > redis-cli sadd backends:[hostname] [ip]:[port]
@@ -37,7 +37,7 @@ Distribute requests for `api.example.dev` to ports 5566 and 5577:
 {"success": "definitely"}
 ```
 
-If you add multiple backends to a set, new visitors will be randomly directed to one of them as a rough form of load balancing. If a session ID is present (using the cookie "cookie_connect.sid" by default) simon will direct subsequent visits to the same backend.
+If Simon finds multiple destinations, new visitors will be randomly directed to one of them as a rough form of load balancing. If a session ID is present Simon will direct all further visits to the same destination. The session ID is read from the cookie "cookie_connect.sid" by default, see options below for how to change this.
 
 ## Wildcard domains
 
@@ -65,14 +65,14 @@ cd openresty-VERSION/
 make && sudo make install
 ```
 
-* Clone simon into `/opt/openresty/lualib/`
+* Clone Simon into `/opt/openresty/lualib/`
 
 ```
 cd /opt/openresty/lualib/
 git clone http://github.com/spro/simon
 ```
 
-* Add to `/opt/openresty/nginx/conf/nginx.conf`
+* Edit `/opt/openresty/nginx/conf/nginx.conf` to add `lua_package_path` (outside of the server block) and the Simon configuration (inside the server location block).
 
 ```
 http {
@@ -102,7 +102,7 @@ http {
 
 * `cookie_key` (default "cookie_connect.sid"): Name of the cookie from which a session ID should be read.
 
-Usage: above `access_by_lua_file`, add the line `set $cookie_key "custom_cookie_key"`
+Usage: in the server location block, before `access_by_lua_file`, add a line `set $cookie_key "custom_cookie_key"`
 
 ## TODO
 
