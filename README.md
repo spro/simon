@@ -1,37 +1,55 @@
 # simon
-dynamic routing/vhosts with nginx + Lua + Redis. Largely inspired by [hipache](https://github.com/hipache/hipache), a standalone proxy that does the same thing.
+Dynamic routing / virtual hosts with nginx, Lua, and Redis.
+
+Simon allows you to very quickly point domains to specific ports by setting up dynamic `proxy_pass` directives. Largely inspired by [hipache](https://github.com/hipache/hipache), a standalone proxy that does the same thing.
+
+![simon](https://github.com/spro/simon/blob/master/simon.png?raw=true)
 
 # Usage
 
 When a request hits Simon, Simon looks in Redis for a set called `backends:[hostname]` and passes the location it finds to `proxy_pass`, and nginx proxies your request there. To add a route, add it to the proper Redis set:
 
 ```
-sadd backends:[hostname] [ip]:[port]
+> redis-cli sadd backends:[hostname] [ip]:[port]
 ```
 
-## Examples
+## Basic example
 
-Use with a local nginx server and dnsmasq to make easy aliases for local projects:
+Point `example.dev` to local port 8080
 
 ```
-> redis-cli sadd backends:project.dev 127.0.0.1:5520
+> redis-cli sadd backends:example.dev 127.0.0.1:8080
 1
 
-> curl project.dev
-<h1>Welcome to project.dev</h1>
+> curl example.dev
+<h1>Welcome to example.dev</h1>
 ```
 
-Or on a server to distribute requests for a certain subdomain:
+## Load balancing
+
+Distribute requests for `api.example.dev` to ports 5566 and 5577:
 
 ```
-> redis-cli sadd backends:api.tryna.io 107.53.26.48:2280 107.52.2.16:2280 57.63.86.48:2280
-3
+> redis-cli sadd backends:api.example.dev 127.0.0.1:5566 127.0.0.1:5577
+2
 
-> curl api.tryna.io
-<a href='http://areyoutryna.com/'>are you tryna?</a>
+> curl api.example.dev
+{"success": "definitely"}
 ```
 
-If you add multiple backends to a set, new visitors will be randomly directed to one of the members as a rough form of load balancing. If a session ID is present (read from the cookie "cookie_connect.sid" by default) it will be used to consistently direct visitors to one backend.
+If you add multiple backends to a set, new visitors will be randomly directed to one of them as a rough form of load balancing. If a session ID is present (using the cookie "cookie_connect.sid" by default) simon will direct subsequent visits to the same backend.
+
+## Wildcard domains
+
+You can use an asterisk "\*" to define a catch-all for a single level; "*.example.dev" will match "hello.example.dev" but not "api.staging.example.dev":
+
+```
+> redis-cli sadd backends:*.example.dev 127.0.0.1:8080
+1
+
+> curl ww3.example.dev
+<h1>Welcome to example.dev</h1>
+```
 
 # Installation
 
