@@ -72,7 +72,7 @@ cd /opt/openresty/lualib/
 git clone http://github.com/spro/simon
 ```
 
-* Edit `/opt/openresty/nginx/conf/nginx.conf` to add `lua_package_path` (outside of the server block) and the Simon configuration (inside the server location block).
+* Edit `/opt/openresty/nginx/conf/nginx.conf` to add `lua_package_path` (outside of the server block) and the Simon configuration (inside the location block).
 
 ```
 http {
@@ -102,7 +102,7 @@ http {
 
 * `cookie_key` (default "cookie_connect.sid"): Name of the cookie from which a session ID should be read.
 
-Usage: in the server location block, before `access_by_lua_file`, add a line `set $cookie_key "custom_cookie_key"`
+Usage: in the location block, before `access_by_lua_file`, add a line `set $cookie_key "custom_cookie_key";`
 
 ## TODO
 
