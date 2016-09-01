@@ -15,7 +15,7 @@ When a request hits Simon, Simon looks in Redis for a set called `backends:[host
 
 ## Basic example
 
-Point `example.dev` to local port 8080
+Point `example.dev` to local port 8080:
 
 ```
 > redis-cli sadd backends:example.dev 127.0.0.1:8080
@@ -41,7 +41,7 @@ If you add multiple backends to a set, new visitors will be randomly directed to
 
 ## Wildcard domains
 
-You can use an asterisk "\*" to define a catch-all for a single level; "*.example.dev" will match "hello.example.dev" but not "api.staging.example.dev":
+You can use an asterisk "\*" to define a catch-all / fallback for a single domain level. "*.example.dev" will match "hello.example.dev" but not "api.staging.example.dev":
 
 ```
 > redis-cli sadd backends:*.example.dev 127.0.0.1:8080
@@ -50,6 +50,8 @@ You can use an asterisk "\*" to define a catch-all for a single level; "*.exampl
 > curl ww3.example.dev
 <h1>Welcome to example.dev</h1>
 ```
+
+If an exact match is found it will be used before a wildcard domain.
 
 # Installation
 
