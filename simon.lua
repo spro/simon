@@ -44,4 +44,10 @@ if sid then red:set('sess:' .. host .. ':' .. sid, chosen) end
 
 -- Set chosen proxy server
 ngx.var.proxy_to = chosen
+local proxy_host = red:get('backends:' .. host .. ':host')
+if proxy_host ~= ngx.null then
+    ngx.var.proxy_host = proxy_host
+else
+    ngx.var.proxy_host = ngx.var.http_host
+end
 
