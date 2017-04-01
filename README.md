@@ -173,5 +173,5 @@ Not pointing api.example.dev to 127.0.0.1:5557
 
 ## TODO
 
-* Non-proxy routes e.g. `backends:static.example.dev /var/nginx/html/static`
+* Non-proxy routes e.g. `simon:static.example.dev /var/nginx/html/static`
 * Custom error pages (currently shows a generic Nginx error if no hostname matches)
