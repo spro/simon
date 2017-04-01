@@ -11,7 +11,7 @@ host = string.lower(string.gsub(host, "^www.", ""))
 
 if sid then
 
-    -- Check for an assigned backend
+    -- Check for assigned backend for session
     local backend, err = red:get('sess:' .. host .. ':' .. sid)
 
     -- Use the assigned backend if it exists
@@ -23,7 +23,7 @@ if sid then
 end
 
 -- Choose a random backend based on the host
-local backends = red:smembers('backends:' .. host)
+local backends = red:smembers('simon:' .. host)
 
 -- Try to find a wildcard definition if there's no match
 if #backends == 0 then
@@ -34,17 +34,21 @@ if #backends == 0 then
     if #host_parts > 2 then
         table.remove(host_parts, 1)
         local host_trimmed = table.concat(host_parts, '.')
-        backends = red:smembers('backends:*.' .. host_trimmed)
+        backends = red:smembers('simon:*.' .. host_trimmed)
     end
 end
 
+-- Choose a random option
 local chosen = backends[math.random(#backends)]
 
+-- Save this host for session
 if sid then red:set('sess:' .. host .. ':' .. sid, chosen) end
 
--- Set chosen proxy server
+-- Set proxy_to variable
 ngx.var.proxy_to = chosen
-local proxy_host = red:get('backends:' .. host .. ':host')
+
+-- Set proxy_host variable
+local proxy_host = red:get('simon:' .. host .. ':host')
 if proxy_host ~= ngx.null then
     ngx.var.proxy_host = proxy_host
 else

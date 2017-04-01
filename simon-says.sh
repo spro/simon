@@ -24,11 +24,11 @@ if [[ ! -z $DESTINATION ]]; then
     fi
 
     if [ "$REMOVE" = true ]; then
-        redis-cli srem backends:$HOSTNAME $DESTINATION | echo "Not pointing $HOSTNAME to $DESTINATION"
+        redis-cli srem simon:$HOSTNAME $DESTINATION | echo "Not pointing $HOSTNAME to $DESTINATION"
     else
-        redis-cli sadd backends:$HOSTNAME $DESTINATION | echo "Pointing $HOSTNAME to $DESTINATION"
+        redis-cli sadd simon:$HOSTNAME $DESTINATION | echo "Pointing $HOSTNAME to $DESTINATION"
     fi
 fi
 
 # List all assigned destinations
-redis-cli smembers backends:$HOSTNAME
+redis-cli smembers simon:$HOSTNAME
