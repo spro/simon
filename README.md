@@ -132,6 +132,45 @@ Set up "Static website hosting" on your S3 bucket to get public access and loadi
 > redis-cli set simon:static.example.dev:hostname bucket.s3-website.amazonaws.com
 ```
 
+### Removing a route
+
+To remove a destination, remove it from the Redis set with `SREM`:
+
+```
+> redis-cli srem simon:api.example.dev 127.0.0.1:5566
+```
+
+To delete an entire route (all destinations) use the Redis `DEL` command:
+
+```
+> redis-cli del simon:api.example.dev
+```
+
+### `simon-says` helper script
+
+Instead of using the Redis CLI directly, you can use the provided `simon-says` bash script for a slightly nicer experience, such as 
+
+* Prefixing `127.0.0.1` if not supplied
+* Deleting routes with `-`
+* Listing other destinations after adding/deleting
+
+```bash
+# Add a destination
+> simon-says api.example.dev :5557
+Pointing api.example.dev to 127.0.0.1:5557
+1) "127.0.0.1:5557"
+2) "127.0.0.1:5555"
+
+# Delete a destination
+> simon-says api.example.dev -:5557
+Not pointing api.example.dev to 127.0.0.1:5557
+1) "127.0.0.1:5555"
+
+# List destinations for a route
+> simon-says api.example.dev
+1) "127.0.0.1:5555"
+```
+
 ## TODO
 
 * Non-proxy routes e.g. `backends:static.example.dev /var/nginx/html/static`
